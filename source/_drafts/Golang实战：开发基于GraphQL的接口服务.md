@@ -10,9 +10,7 @@ Golang对比目前主流的后端开发语言Java具有以下优势：
 
 - 流行Golang HTTP框架对比与Echo框架教程；
 - 流行Golang GraphQL框架对比与graphql-go框架教程；
-- Golang操作PostgresSQL数据库；
 - 使用Docker部署Golang应用；
-- 接入GitHub Actions实现开发流程自动化；
 
 > 在阅读本文前你需要有一定的Golang基础，你可以[阅读免费电子书](http://go.wuhaolin.cn/)入门。
 
