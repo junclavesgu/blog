@@ -163,28 +163,28 @@ e.Use(middleware.CORS())
 // 记录请求日志 
 e.Use(middleware.Logger())
 ```
-# graphql-go
+# 用Golang实现GraphQL
 
 ## graphql协议介绍
-graphql作为一种全新的api设计思想，把前端所需要的api用类似图数据结构的方式结构清晰地展现出来，让前端很方便的获取所需要的数据。
-graphql可用来取代目前用的最多的restful规范，相比于restful有如下优势：
+GraphQL作为一种全新的api设计思想，把前端所需要的api用类似图数据结构的方式结构清晰地展现出来，让前端很方便的获取所需要的数据。
+GraphQL可用来取代目前用的最多的restful规范，相比于restful有如下优势：
 
 - 数据的关联性和结构化更好，接口即文档，节省手动维护接口文档的精力；
 - 更健壮的接口：静态类型Schema约束，不仅能校验前端发送的参数是否符合格式，还能自动生成TypeScript和C等语言中的类型定义；
-- [易于前端缓存数据](https://graphql.org/learn/caching/)：借助结构化，社区中很多graphql客户端内置了改功能；
+- [易于前端缓存数据](https://graphql.org/learn/caching/)：借助结构化，社区中很多GraphQL客户端内置了改功能；
 - 按需选择：前端根据自己的场景选择部分字段返回，节省计算和网络传输；
 
-自从FaceBook2012公布了GraphQL规范后，引起了很多大公司和社区关注，逐渐有公司开始使用graphql作为API规范。
-在Golang社区中也涌现了多个graphql服务端框架，例如：
+自从FaceBook2012公布了GraphQL规范后，引起了很多大公司和社区关注，逐渐有公司开始使用GraphQL作为API规范。
+在Golang社区中也涌现了多个GraphQL服务端框架，例如：
 
 1. [graphql](https://github.com/graphql-go/graphql)：目前用户最多，但缺点是完全通过Golang代码描述字段、结构、取数据逻辑，代码臃肿
-2. [gqlgen](https://github.com/99designs/gqlgen)：需要先定义graphql Schema，然后通过工具生成大量模版代码，再用Golang代码填充取数据逻辑
-3. [graphql-go](https://github.com/graph-gophers/graphql-go)：需要先定义graphql Schema，再加Golang代码描述取数据逻辑，代码简约
+2. [gqlgen](https://github.com/99designs/gqlgen)：需要先定义GraphQL Schema，然后通过工具生成大量模版代码，再用Golang代码填充取数据逻辑
+3. [graphql-go](https://github.com/graph-gophers/graphql-go)：需要先定义GraphQL Schema，再加Golang代码描述取数据逻辑，代码简约
 
-本文将选择第三个graphql-go作为graphql服务端框架，接下来介绍如何使用它。
+本文将选择第三个graphql-go作为GraphQL服务端框架，接下来介绍如何使用它。
 
 
-### 定义graphql Schema
+### 定义GraphQL Schema
 假如我们需要实现一个搜索电影的服务，我们需要先定义接口暴露的Schema
 ```graphql
 schema {
@@ -286,7 +286,7 @@ func WrapMovies(movies []*model.Movie) []*MovieResolver {
 演员信息的取值实现逻辑和电影的非常相似就不再复述。
 
 # 打通Echo和graphql-go
-graphql-go暴露了一个Exec函数用于执行graphql语句，改函数入参为上下文和请求体返回为获取到的数据，用发如下：
+graphql-go暴露了一个Exec函数用于执行GraphQL语句，改函数入参为上下文和请求体返回为获取到的数据，用发如下：
 ```go
 schema := graphql.MustParseSchema(`上面定义的Schema`, QueryResolver{}, graphql.UseFieldResolvers())
 data := schema.Exec(context.Request().Context(), params.Query, params.OperationName, params.Variables)
@@ -311,10 +311,10 @@ e.Any("/graphql", func(context echo.Context) (err error) {
 	return context.JSON(http.StatusOK, data)
 })
 ```
-以上就开发完了一个基于Golang的graphql服务。
+以上就开发完了一个基于Golang的GraphQL服务。
 
-# 使用Docker部署graphql服务
-使用Docker部署服务能抹去大量繁琐易错的手工操作，使用Docker部署的第一步是需要把我们上面开发完的graphql服务构建成一个镜像，
+# 使用Docker部署GraphQL服务
+使用Docker部署服务能抹去大量繁琐易错的手工操作，使用Docker部署的第一步是需要把我们上面开发完的GraphQL服务构建成一个镜像，
 为此需要写一个Dockerfile：
 ```Dockerfile
 FROM golang:latest as builder
@@ -348,7 +348,7 @@ jobs:
           dockerfile: http/Dockerfile
           workdir: ./
 ```
-每次你向Github推送代码后都会自动触发构建生产最新的graphql服务镜像，有了镜像你可以直接通过docker运行服务：
+每次你向Github推送代码后都会自动触发构建生产最新的GraphQL服务镜像，有了镜像你可以直接通过docker运行服务：
 ```shell script
 docker run -d --name http-server -p 80:80 -p 443:443 docker.pkg.github.com/gwuhaolin/projectname/http-server:latest
 ```
@@ -358,6 +358,6 @@ docker run -d --name http-server -p 80:80 -p 443:443 docker.pkg.github.com/gwuha
 使用Golang开发出的Graphql服务不仅能支撑高并发量，编译出的产物也非常小，
 由于不依赖虚拟机，搭配上Docker带来的自动化部署给开发者节省成本的同时又带来稳定和便利。
 
-虽然Golang能开发出小巧高效的Graphql服务，但可以看出在实现graphql取数逻辑那块有大量繁琐重复的工作，
+虽然Golang能开发出小巧高效的Graphql服务，但可以看出在实现GraphQL取数逻辑那块有大量繁琐重复的工作，
 这归咎于Golang语法太过死板无法给框架开发者发挥空间来实现使用更便利的框架，希望后续Golang2能提供更灵活的语法来优化这些不足。
 
