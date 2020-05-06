@@ -1,10 +1,13 @@
-检索数据库中的条目是大多数系统都需要的功能，实现的方法也很多，诸如：
+检索数据库中的条目在大多数系统都会用到，实现的方法也很多，常见的包括：
 
 1. 基于[Elasticsearch](https://www.elastic.co/cn/elasticsearch) 或 [Lucene](https://lucene.apache.org)这类专业独立的检索引擎实现
 2. 基于数据库自带的检索功能实现
 
 虽然基于Elasticsearch这类系统能实现高级灵活的检索功能，但开发和运维成本也将大大增加，
 本文将教会你如何利用PostgresSQL内置的功能快速高效的实现大多数中文检索场景。
+
+检索是大多数系统需要的功能，虽然已有很多成熟的检索方案，但多数是面向英文的对中文不友好。
+虽然有Elasticsearch这类高级的检索引擎能实现中文检索但其学习和运维成本高，本文将教会你如何使用PostgresSQL数据库自带的功能实现大多数中文检索场景。
 
 ## 实现中文检索的四种方式
 
@@ -56,7 +59,30 @@ PostgresSQL同样提供了SIMILAR TO语句的简写形式：
 > 这些SQL语法都是PostgresSQL特有的，虽然便捷但不推荐使用，因为兼容性和可读性不好。
 
 ### pg_trgm 字符串相似度
+[pg_trgm](http://www.postgres.cn/docs/11/pgtrgm.html)模块提供了两个字符串相似度计算的函数，
+该方法区别于上面两种方法的区别在于利用了概率论的思想来寻找最相似的结果，而不是严格的匹配。
 
+##### Trigram模型介绍
+该模块的算法是基于[Trigram](https://en.wikipedia.org/wiki/Trigram)模型实现的，
+Trigram全名third grammar，是[N-gram](https://en.wikipedia.org/wiki/N-gram)模型的在N=3时的一个特例。
+Trigram的前提思想是假设第X个词的出现只与前面3-1=2个词相关，而与其它任何词都不相关。
+在计算相似度时先把一段文字拆分成为多个词，3个一组形成一个Trigram，再找出这个序列中最大相似的Trigram。
+以文字`one`Trigram的拆分规则为：
+
+1. 前置两个空格，后置一个空格，变成`  one `
+2. 按照从前往后的顺序3个一组拆分为`{  o, on,ne ,one}`
+
+> 你通过通过`SELECT show_trgm('one')`语句来查询如何文本的拆分结果（实际上show_trgm除了调试很少有用）。
+
+> 为什么这里N选择了3而不是其它？是因为N太大会导致计算量成指数上升，而3有着不错的效果同时也能有很好的性能。
+
+#### 使用pg_trgm模块
+PostgresSQL默认没有开启pg_trgm模块，需要通过以下语句启用：
+```sql
+CREATE EXTENSION pg_trgm
+```
+
+> PostgresSQL还支持图片相似度搜索
 ### zhparser分词与tsquery
 
 
@@ -64,5 +90,5 @@ PostgresSQL同样提供了SIMILAR TO语句的简写形式：
 - PostgresSQL常用索引和适用场景
 - 不同检索方式该用什么索引
 
-## 三种方法对比与适用场景总结
+## 四种检索方法对比与适用场景总结
  
