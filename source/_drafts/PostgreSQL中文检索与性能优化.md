@@ -81,8 +81,22 @@ PostgresSQL默认没有开启pg_trgm模块，需要通过以下语句启用：
 ```sql
 CREATE EXTENSION pg_trgm
 ```
+成功开启后，可以通过`similarity(a, b)`函数判断两句话的相似度，返回的结果是一个`[0,1]`的浮点数，
+0表示完全没有一致的字符，1表示完全一样。
 
-> PostgresSQL还支持图片相似度搜索
+如果你想求一句话和一个词的相似度，例如`two words`和`word`的相似度，如果用上面提到的similarity函数会得到`0.36`，
+得到这个很低的结果是因为similarity会考虑整体的相似性；
+如果想求局部相似性，也就是句子里的`words`和单词`word`相似的，可以使用`word_similarity('word','two words')`得到的结果是`0.8`。
+
+针对以上函数PostgresSQL还提供了简写形式：
+
+- `a % b`：判断`similarity(a, b)`是否大于阀值`pg_trgm.similarity_threshold`（默认0.3）
+- `a <% b`：判断`word_similarity(a, b)`是否大于阀值`pg_trgm.strict_word_similarity_threshold`（默认0.6）
+- `a <-> b`：a和b之间的整体相似距离，越大表示越不相似，等价于`1-similarity(a, b)`
+- `a <<-> b`：a和b之间的局部相似距离，越大表示越不相似，等价于`1-word_similarity(a, b)`
+
+> 你可以通过 `SET pg_trgm.similarity_threshold = 0.8` 语句修改默认的阀值，但通常情况下使用默认值就能获得很好的效果。
+
 ### zhparser分词与tsquery
 
 
