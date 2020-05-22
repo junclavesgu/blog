@@ -12,6 +12,9 @@ Golang对比目前主流的后端开发语言Java具有以下优势：
 - 流行Golang GraphQL框架对比与graphql-go框架教程；
 - 使用Docker部署Golang应用；
 
+搭建出的服务整体架构如图：
+![服务整体架构](http://p0.meituan.net/scarlett/8e85fb67b87c19d7f693991aa9d46a46288657.png)
+
 > 在阅读本文前你需要有一定的Golang基础，你可以[阅读免费电子书](http://go.wuhaolin.cn/)入门。
 
 # HTTP框架
@@ -282,6 +285,9 @@ func WrapMovies(movies []*model.Movie) []*MovieResolver {
 }
 ```
 演员信息的取值实现逻辑和电影的非常相似就不再复述。
+
+定义的Schema和Golang代码之间有一个很清晰的映射，包括下钻的嵌套字段，如图：
+![嵌套字段映射图](http://p0.meituan.net/scarlett/03994d353b863f9a14f5cfcb2a974db42724968.png)
 
 # 打通Echo和graphql-go
 graphql-go暴露了一个Exec函数用于执行GraphQL语句，改函数入参为上下文和请求体返回为获取到的数据，用发如下：
