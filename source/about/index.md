@@ -17,3 +17,6 @@ header-img: "img/bg.jpg"
 
 ### 我的电影小站
 <a href="https://dy.wuhaolin.cn/">dy电影</a>
+
+### 我的浏览器插件
+<a href="http://djradar.wuhaolin.cn/">低价雷达</a>
