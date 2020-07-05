@@ -20,3 +20,4 @@ header-img: "img/bg.jpg"
 
 ### 我的浏览器插件
 <a href="http://djradar.wuhaolin.cn/">低价雷达</a>
+<a href="http://bilidown.wuhaolin.cn/">B站视频下载</a>
