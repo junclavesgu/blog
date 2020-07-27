@@ -27,6 +27,9 @@
 ### 编程语言
 - [WebAssembly 现状与实战](https://github.com/gwuhaolin/blog/issues/17)
 
+### 后端
+- [PostgreSQL中文检索与性能优化](https://github.com/gwuhaolin/blog/issues/25)
+
 ## 注意
 - 正文见 [Issues](https://github.com/gwuhaolin/blog/issues)
 - 喜欢点star，想订阅点watch，fork没意义，想参与一篇文章的讨论点文章左下角的👍
