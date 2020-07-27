@@ -174,6 +174,8 @@
                 <div class="post-heading">
                     <div class="tags">
                         
+                          <a class="tag" href="/tags/#后端" title="后端">后端</a>
+                        
                     </div>
                     <h1>PostgreSQL中文检索与性能优化</h1>
                     <h2 class="subheading"></h2>
@@ -265,7 +267,7 @@
 <h3 id="B树（B-tree，Balanced-tree）索引"><a href="#B树（B-tree，Balanced-tree）索引" class="headerlink" title="B树（B-tree，Balanced tree）索引"></a>B树（B-tree，Balanced tree）索引</h3><p>B树索引是使用范围最广的索引，也是执行<code>CREATE INDEX</code>时默认使用的索引，几乎所有的数据库都支持B树索引。<br>B树索引可以有效地用于等值和范围查询，并且也可以用于检索NULL值，排序。</p>
 <p>B树索引适用于前匹配的LIKE检索，例如<code>权力的%</code>，但不能用于<code>%权力的</code>或<code>%权力的%</code>，原因在于只有前匹配才能建立B-tree。</p>
 <h3 id="哈希（Hash）索引"><a href="#哈希（Hash）索引" class="headerlink" title="哈希（Hash）索引"></a>哈希（Hash）索引</h3><p>哈希索引原理就像map一样对数据进行KV映射，因此只在等值比较时才有用，但它性能非常好。</p>
-<h3 id="倒排（GIN，Generalized-Inverted-Indexes）索引"><a href="#倒排（GIN，Generalized-Inverted-Indexes）索引" class="headerlink" title="倒排（GIN，Generalized Inverted Indexes）索引"></a>倒排（GIN，Generalized Inverted Indexes）索引</h3><p>倒排索引以字或词为关键字进行索引，表中关键字所对应的记录表项记录了出现这个字或词的所有文档，一个表项就是一个字表段，它记录该文档的ID和字符在该文档中出现的位置情况。<br>倒排索引的结构图如下图：<br><img src="http://p1.meituan.net/scarlett/c1e37cd57d638f3a18a76510c8fb016b17980.png" alt="倒排索引的结构图"><br>由于每个字或词对应的文档数量在动态变化，所以倒排表的建立和维护都较为复杂，但是在查询的时候由于可以一次得到查询关键字所对应的所有文档，所以非常适用用于索引数组值。</p>
+<h3 id="倒排（GIN，Generalized-Inverted-Indexes）索引"><a href="#倒排（GIN，Generalized-Inverted-Indexes）索引" class="headerlink" title="倒排（GIN，Generalized Inverted Indexes）索引"></a>倒排（GIN，Generalized Inverted Indexes）索引</h3><p>倒排索引以字或词为关键字进行索引，表中关键字所对应的记录表项记录了出现这个字或词的所有文档，一个表项就是一个字表段，它记录该文档的ID和字符在该文档中出现的位置情况。<br>倒排索引的结构图如下图：<br><img src="https://p1.meituan.net/scarlett/c1e37cd57d638f3a18a76510c8fb016b17980.png" alt="倒排索引的结构图"><br>由于每个字或词对应的文档数量在动态变化，所以倒排表的建立和维护都较为复杂，但是在查询的时候由于可以一次得到查询关键字所对应的所有文档，所以非常适用用于索引数组值。</p>
 <h3 id="广义搜索树（GiST，Generalized-Search-Tree）索引"><a href="#广义搜索树（GiST，Generalized-Search-Tree）索引" class="headerlink" title="广义搜索树（GiST，Generalized Search Tree）索引"></a>广义搜索树（GiST，Generalized Search Tree）索引</h3><p>它是一种平衡树结构的访问方法,在系统中作为一个基本模版,可以使用它实现任意索引模式，GiST实际上是一个通用的索引框架，支持多种数据类型。<br>Gist索引适用于多维数据类型和集合数据类型，和Btree索引类似，同样适用于其他的数据类型。<br>和Btree索引相比，Gist多字段索引在查询条件中包含索引字段的任何子集都会使用索引扫描，而Btree索引只有查询条件包含第一个索引字段才会使用索引扫描。</p>
 <p>来总结下四种索引适用的场景，方便后续根据场景查询适用的索引：</p>
 <table>
@@ -353,6 +355,8 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
+                          <a class="tag" href="/tags/#后端" title="后端">后端</a>
+                        
                     </div>
                 </section>
                 

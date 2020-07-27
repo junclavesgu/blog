@@ -3,7 +3,7 @@ title: PostgreSQL中文检索与性能优化
 date: 2020-07-27T02:56:48Z
 url: https://github.com/gwuhaolin/blog/issues/25
 tags:
-
+    - 后端
 ---
 
 检索数据库中的条目是很基本常见的功能，实现的方法也很多，常见包括：
@@ -123,7 +123,7 @@ B树索引适用于前匹配的LIKE检索，例如`权力的%`，但不能用于
 ### 倒排（GIN，Generalized Inverted Indexes）索引
 倒排索引以字或词为关键字进行索引，表中关键字所对应的记录表项记录了出现这个字或词的所有文档，一个表项就是一个字表段，它记录该文档的ID和字符在该文档中出现的位置情况。
 倒排索引的结构图如下图：
-![倒排索引的结构图](http://p1.meituan.net/scarlett/c1e37cd57d638f3a18a76510c8fb016b17980.png)
+![倒排索引的结构图](https://p1.meituan.net/scarlett/c1e37cd57d638f3a18a76510c8fb016b17980.png)
 由于每个字或词对应的文档数量在动态变化，所以倒排表的建立和维护都较为复杂，但是在查询的时候由于可以一次得到查询关键字所对应的所有文档，所以非常适用用于索引数组值。
 
 ### 广义搜索树（GiST，Generalized Search Tree）索引
