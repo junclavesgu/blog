@@ -25,7 +25,7 @@ Golang对比目前主流的后端开发语言Java具有以下优势：
 - 使用Docker部署Golang应用；
 
 搭建出的服务整体架构如图：
-![服务整体架构](https://p0.meituan.net/scarlett/8e85fb67b87c19d7f693991aa9d46a46288657.png)
+![服务整体架构](https://user-images.githubusercontent.com/5773264/90727363-c8af0680-e2f5-11ea-8c1c-f303fcead9d8.png)
 
 > 在阅读本文前你需要有一定的Golang基础，你可以[阅读免费电子书](http://go.wuhaolin.cn/)入门。
 
