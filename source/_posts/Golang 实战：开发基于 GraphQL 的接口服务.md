@@ -3,7 +3,7 @@ title: Golang 实战：开发基于 GraphQL 的接口服务
 date: 2020-08-20T06:58:23Z
 url: https://github.com/gwuhaolin/blog/issues/26
 tags:
-
+    - 后端
 ---
 
 本文首发于[IBMDev社区](https://developer.ibm.com/zh/articles/develop-graphql-services-using-golang/)
