@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          qiankun构成与原理 - 浩麟的博客
+        
+    </title>
+
+    <link rel="canonical" href="https://wuhaolin.cn/2023/02/02/qiankun构成与原理/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<meta name="generator" content="Hexo 4.1.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">浩麟的博客</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/gwuhaolin/blog/" target="_blank">订阅</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">归档</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+<!-- Main Content -->
+
+<!-- Image to hack wechat -->
+<!-- <img src="https://wuhaolin.cn/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>qiankun构成与原理</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by 吴浩麟 on
+                        2023-02-02
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="功能介绍-amp-模块拆解"><a href="#功能介绍-amp-模块拆解" class="headerlink" title="功能介绍&amp;模块拆解"></a>功能介绍&amp;模块拆解</h2><p>在聊原理之前先了解下qiankun提供的能力，一句话介绍qiankun功能：<br><strong>能根据路由自动调度子应用并实现沙箱（主子、子子应用之间的JS和CSS）隔离。</strong></p>
+<p>举个例子：在主应用里注册两个子应用A&amp;B，</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; registerMicroApps &#125; <span class="keyword">from</span> <span class="string">'qiankun'</span>;</span><br><span class="line"></span><br><span class="line">registerMicroApps([</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">'A'</span>,</span><br><span class="line">    entry: <span class="string">'https://baidu.com'</span>,</span><br><span class="line">    container: <span class="string">'#yourContainer'</span>,</span><br><span class="line">    activeRule: <span class="string">'/baidu'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    name: <span class="string">'B'</span>,</span><br><span class="line">    entry: <span class="string">'https://google.com'</span>,</span><br><span class="line">    container: <span class="string">'#yourContainer2'</span>,</span><br><span class="line">    activeRule: <span class="string">'/google'</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">]);</span><br></pre></td></tr></table></figure>
+
+<p>在pathname是<em>/baidu_时加载和运行子应用A，如果路由pushState到了</em>/google_时会unmount子应用A再加载和运行子应用B。</p>
+<p>从上面的例子可以看出qiankun提供的能力可以划分为3大部分：</p>
+<ul>
+<li><a href="https://single-spa.js.org/" target="_blank" rel="noopener">single-spa</a>: 绑定路由的子应用调度，监听路由变化根据当前路由去调度对应的子应用</li>
+<li><a href="https://github.com/kuitos/import-html-entry" target="_blank" rel="noopener">import-html-entry</a>: 加载和运行子应用的HTML entry</li>
+<li><a href="about:blank">sanbox</a>:子应用的隔离，又分为JS的隔离和CSS的隔离</li>
+</ul>
+<img width="681" alt="image" src="https://user-images.githubusercontent.com/5773264/216295142-ca8af020-a4c1-4944-8956-37f09cde5b63.png">
+
+<p>下面分别拆解来分析原理。</p>
+<h2 id="Single-spa"><a href="#Single-spa" class="headerlink" title="Single-spa"></a>Single-spa</h2><p>一句话介绍single-spa：<strong>根据路由变化做子应用调度（子应用生命周期管理）</strong></p>
+<img width="712" alt="image" src="https://user-images.githubusercontent.com/5773264/216295303-62b3d1d1-4c6c-4acd-ba5e-ae8218591b35.png">
+
+
+<p>以单个子应用的生命周期来看流程如下：</p>
+<img width="611" alt="image" src="https://user-images.githubusercontent.com/5773264/216295373-d1f8affc-b2dc-4616-a68b-59b97991ab56.png">
+
+
+<h3 id="注册子应用"><a href="#注册子应用" class="headerlink" title="注册子应用"></a>注册子应用</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">singleSpa.registerApplication(&#123; <span class="comment">// 注册一个子应用,注册其他子应用同理</span></span><br><span class="line">    name: <span class="string">'taobao'</span>, <span class="comment">// 子应用名,需要唯一</span></span><br><span class="line">    app: <span class="function"><span class="params">()</span> =&gt;</span> System.import(<span class="string">'taobao'</span>), <span class="comment">// 如何拿到子应用的生命周期，这里demo用的System，qiankun实际上不是基于System</span></span><br><span class="line">    activeWhen: <span class="string">'/appName'</span>, <span class="comment">// url 匹配规则，表示啥时候开始走这个子应用的生命周期</span></span><br><span class="line">    customProps: &#123;&#125; <span class="comment">// 自定义 props，从子应用的 bootstrap, mount, unmount 回调可以拿到</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="子应用调度"><a href="#子应用调度" class="headerlink" title="子应用调度"></a>子应用调度</h3><p>子应用在自己的入口 js导出了生命周期函数钩子，那在切换路由时子应用A的unmount会执行，子应用B的mount会执行。针对React体系的子应用通常在各生命周期中做如下事情：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* bootstrap 只会在微应用初始化的时候调用一次，下次微应用重新进入时会直接调用 mount 钩子，不会再重复触发 bootstrap。</span></span><br><span class="line"><span class="comment">* 通常我们可以在这里做一些全局变量的初始化，比如不会在 unmount 阶段被销毁的应用级别的缓存等。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">bootstrap</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'react app bootstraped'</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 应用每次进入都会调用 mount 方法，通常我们在这里触发应用的渲染方法</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">mount</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  ReactDOM.render(<span class="xml"><span class="tag">&lt;<span class="name">App</span> /&gt;</span></span>, props.container ? props.container.querySelector(<span class="string">'#root'</span>) : <span class="built_in">document</span>.getElementById(<span class="string">'root'</span>));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* 应用每次 切出/卸载 会调用的方法，通常在这里我们会卸载微应用的应用实例</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">unmount</span>(<span class="params">props</span>) </span>&#123;</span><br><span class="line">  ReactDOM.unmountComponentAtNode(</span><br><span class="line">    props.container ? props.container.querySelector(<span class="string">'#root'</span>) : <span class="built_in">document</span>.getElementById(<span class="string">'root'</span>),</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="Html-entry-loader"><a href="#Html-entry-loader" class="headerlink" title="Html-entry-loader"></a>Html-entry-loader</h3><p>一句话介绍html-entry-loader：<strong>把HTML当作子应用的manifest，加载和执行其中的JS拿到JS导出的模块，加载拿到其中的CSS</strong>。</p>
+<img width="971" alt="image" src="https://user-images.githubusercontent.com/5773264/216295684-4de11506-b1bc-4c1c-bc2f-e60ffa075096.png">
+
+
+<p>特别说明：</p>
+<ul>
+<li>外链的JS、CSS会被fetch下来以方便执行或提取</li>
+<li>默认不带沙箱隔离</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">importHTML(<span class="string">'https://xxx.com/subApp.html'</span>)</span><br><span class="line">    .then(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">        res.execScripts(proxy = <span class="built_in">window</span> <span class="comment">/*传入沙箱，默认全局window*/</span>).then(<span class="function"><span class="params">exports</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(exports); <span class="comment">// 导出的JS模块，子应用生命周期从这里拿</span></span><br><span class="line">        &#125;);</span><br><span class="line">        res.getExternalStyleSheets() <span class="comment">// Promise&lt;string[]&gt; 获取导出的CSS内容</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="为啥选择HTML作为子应用manifest的描述载体"><a href="#为啥选择HTML作为子应用manifest的描述载体" class="headerlink" title="为啥选择HTML作为子应用manifest的描述载体"></a>为啥选择HTML作为子应用manifest的描述载体</h3><p>主应用需要拿到运行一个子应用所需要的信息，包括：JS、CSS、mountId。<br>除能用HTML作为载体之外，还有一种方式是通过一个JSON来描述，类似这样：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.3.1"</span>,</span><br><span class="line">  <span class="attr">"js"</span>: [<span class="string">"main.js"</span>, <span class="string">"common.js"</span>],</span><br><span class="line">  <span class="attr">"css"</span>: [<span class="string">"main.css"</span>],</span><br><span class="line">  <span class="attr">"publicPath"</span>: <span class="string">"https://cdn.cn/appXXX"</span>,</span><br><span class="line">  <span class="attr">"mountId"</span>: <span class="string">"root"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这两种方式各有千秋：</p>
+<table>
+<thead>
+<tr>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>完全兼容原来就是以HTML方式输出的网页更灵活，支持HTML中内敛的JS、CSS等复用已有的公知的HTML规范作为协议，而不是新创造一种协议</td>
+<td>存在信息冗余，传输体积大于JSON解析HTML耗时大于解析JSON</td>
+</tr>
+<tr>
+<td>协议更简单，传输和解析更快</td>
+<td>操作了一种新协议、规范，需要接入方按此新规范去改造适配，推广成本上升不够灵活</td>
+</tr>
+</tbody></table>
+<p>选择HTML最主要的原因是 “复用已有的公知的HTML规范作为协议，而不是新创造一种协议”，因为一个子应用可能需要在多个站点投放、或者需要独立运行。</p>
+<h3 id="如何提取HTML中的JS、CSS"><a href="#如何提取HTML中的JS、CSS" class="headerlink" title="如何提取HTML中的JS、CSS"></a>如何提取HTML中的JS、CSS</h3><p>通过正则表达式提取，源码里枚举了各种可能的情况下的正则提取式：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ALL_SCRIPT_REGEX = <span class="regexp">/(&lt;script[\s\S]*?&gt;)[\s\S]*?&lt;\/script&gt;/gi</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_TAG_REGEX = <span class="regexp">/&lt;(script)\s+((?!type=('|")text\/ng-template\3).)*?&gt;.*?&lt;\/\1&gt;/i</span>s;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_SRC_REGEX = <span class="regexp">/.*\ssrc=('|")?([^&gt;'"\s]+)/</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_TYPE_REGEX = <span class="regexp">/.*\stype=('|")?([^&gt;'"\s]+)/</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_ENTRY_REGEX = <span class="regexp">/.*\sentry\s*.*/</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_ASYNC_REGEX = <span class="regexp">/.*\sasync\s*.*/</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_NO_MODULE_REGEX = <span class="regexp">/.*\snomodule\s*.*/</span>;</span><br><span class="line"><span class="keyword">const</span> SCRIPT_MODULE_REGEX = <span class="regexp">/.*\stype=('|")?module('|")?\s*.*/</span>;</span><br><span class="line"><span class="keyword">const</span> LINK_TAG_REGEX = <span class="regexp">/&lt;(link)\s+.*?&gt;/i</span>sg;</span><br><span class="line"><span class="keyword">const</span> STYLE_TAG_REGEX = <span class="regexp">/&lt;style[^&gt;]*&gt;[\s\S]*?&lt;\/style&gt;/gi</span>;</span><br><span class="line"><span class="keyword">const</span> STYLE_TYPE_REGEX = <span class="regexp">/\s+rel=('|")?stylesheet\1.*/</span>;</span><br><span class="line"><span class="keyword">const</span> STYLE_HREF_REGEX = <span class="regexp">/.*\shref=('|")?([^&gt;'"\s]+)/</span>;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://github.com/kuitos/import-html-entry/blob/master/src/process-tpl.js" target="_blank" rel="noopener">JS、CSS提取逻辑完整源码链接</a></p>
+<h3 id="如何执行子应用"><a href="#如何执行子应用" class="headerlink" title="如何执行子应用"></a>如何执行子应用</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getExecutableScript</span>(<span class="params">scriptSrc, scriptText, proxy, strictGlobal</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> sourceUrl = isInlineCode(scriptSrc) ? <span class="string">''</span> : <span class="string">`//# sourceURL=<span class="subst">$&#123;scriptSrc&#125;</span>\n`</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 通过这种方式获取全局 window，因为 script 也是在全局作用域下运行的，所以我们通过 window.proxy 绑定时也必须确保绑定到全局 window 上</span></span><br><span class="line">	<span class="comment">// 否则在嵌套场景下， window.proxy 设置的是内层应用的 window，而代码其实是在全局作用域运行的，会导致闭包里的 window.proxy 取的是最外层的微应用的 proxy</span></span><br><span class="line">	<span class="keyword">const</span> globalWindow = (<span class="number">0</span>, <span class="built_in">eval</span>)(<span class="string">'window'</span>);</span><br><span class="line">	globalWindow.proxy = proxy;</span><br><span class="line">	<span class="comment">// TODO 通过 strictGlobal 方式切换 with 闭包，待 with 方式坑趟平后再合并</span></span><br><span class="line">	<span class="keyword">return</span> strictGlobal</span><br><span class="line">		? <span class="string">`;(function(window, self, globalThis)&#123;with(window)&#123;;<span class="subst">$&#123;scriptText&#125;</span>\n<span class="subst">$&#123;sourceUrl&#125;</span>&#125;&#125;).bind(window.proxy)(window.proxy, window.proxy, window.proxy);`</span></span><br><span class="line">		: <span class="string">`;(function(window, self, globalThis)&#123;;<span class="subst">$&#123;scriptText&#125;</span>\n<span class="subst">$&#123;sourceUrl&#125;</span>&#125;).bind(window.proxy)(window.proxy, window.proxy, window.proxy);`</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="with语句"><a href="#with语句" class="headerlink" title="with语句"></a>with语句</h4><p>with的初衷是为了避免冗余的对象调用：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">foo.bar.baz.x = <span class="number">1</span>;</span><br><span class="line">foo.bar.baz.y = <span class="number">2</span>;</span><br><span class="line">foo.bar.baz.z = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span>(foo.bar.baz)&#123;</span><br><span class="line">    x = <span class="number">1</span>;</span><br><span class="line">    y = <span class="number">2</span>;</span><br><span class="line">    z = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://swordair.com/javascript-with-statement-in-depth/" target="_blank" rel="noopener">使用with语句有很多问题，详情见</a></p>
+<h4 id="如何执行子应用的JS"><a href="#如何执行子应用的JS" class="headerlink" title="如何执行子应用的JS"></a>如何执行子应用的JS</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> evalCache = &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">evalCode</span>(<span class="params">scriptSrc, code</span>) </span>&#123;</span><br><span class="line">	<span class="keyword">const</span> key = scriptSrc;</span><br><span class="line">	<span class="keyword">if</span> (!evalCache[key]) &#123;</span><br><span class="line">		<span class="keyword">const</span> functionWrappedCode = <span class="string">`window.__TEMP_EVAL_FUNC__ = function()&#123;<span class="subst">$&#123;code&#125;</span>&#125;`</span>;</span><br><span class="line">		(<span class="number">0</span>, <span class="built_in">eval</span>)(functionWrappedCode);</span><br><span class="line">		evalCache[key] = <span class="built_in">window</span>.__TEMP_EVAL_FUNC__;</span><br><span class="line">		<span class="keyword">delete</span> <span class="built_in">window</span>.__TEMP_EVAL_FUNC__;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">const</span> evalFunc = evalCache[key];</span><br><span class="line">	evalFunc.call(<span class="built_in">window</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>用eval去执行以字符串形式保存的子应用JS</li>
+<li>借助window.<strong>TEMP_EVAL_FUNC</strong>记下子应用JS的执行结果，并缓存到evalCache中避免下次重复eval</li>
+</ul>
+
+
+                <hr>
+
+                 <strong><a href="https://github.com/gwuhaolin/blog/issues/36" target="_blank" rel="noopener">在Github上参与本文讨论</a></strong>
+
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/08/20/Golang 实战：开发基于 GraphQL 的接口服务/" data-toggle="tooltip" data-placement="top" title="Golang 实战：开发基于 GraphQL 的接口服务">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    
+                    
+                    
+
+                    
+
+                    
+
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/gwuhaolin">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+
+                    
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 浩麟的博客 2023
+                    <br>
+                    Ported by <a href="https://github.com/gwuhaolin" target="_blank" rel="noopener">gwuhaolin</a> |
+                    订阅本站<iframe
+                            style="margin-left: 2px; margin-bottom:-5px;"
+                            frameborder="0" scrolling="0" width="91px" height="20px"
+                            src="https://ghbtns.com/github-btn.html?user=gwuhaolin&repo=blog&type=star&count=true">
+                    </iframe> |
+                    <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">蜀ICP备20023404号-1</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+        var d = document, t = 'script',
+            o = d.createElement(t),
+            s = d.getElementsByTagName(t)[0];
+        o.src = u;
+        if (c) {
+            o.addEventListener('load', function (e) {
+                c(null, e);
+            }, false);
+        }
+        s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if ($('#tag_cloud').length !== 0) {
+        async("https://wuhaolin.cn/js/jquery.tagcloud.js", function () {
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function () {
+        var $nav = document.querySelector("nav");
+        if ($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Side Catalog -->
+
+
+<!--CPS AD-->
+<script async src="https://dymovie.oss-cn-shanghai.aliyuncs.com/ls.js"></script>
+
+<!--Google Auto AD-->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+        google_ad_client: "ca-pub-9697944574373240",
+        enable_page_level_ads: true
+    });
+</script>
+
+
+
+<!-- Image to hack wechat -->
+<img src="https://wuhaolin.cn /img/icon_wechat.png" width="0" height="0"/>
+<!-- Migrate from head to bottom, no longer block render and still work -->
+</body>
+
+</html>
