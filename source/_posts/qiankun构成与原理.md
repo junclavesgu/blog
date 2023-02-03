@@ -294,6 +294,9 @@ const fakewindow = new ProxySandbox(); // 给子应用分配的代理window变�
 
 你的JS里有诸如 `document.body.appendChild(scriptElement)` 这样的代码，会动态往DOM里面插入JS，如果不处理这些JS会在主应用的 window 上执行可能污染真正的window。
 为此，沙箱还会拦截appendChild方法，凡是子应用中appendChild进去的JS都会被fetch下来去沙箱里面执行。
+![image](https://user-images.githubusercontent.com/5773264/216525816-8847cee2-a7fc-434d-a8d8-53b27e6ec83b.png)
+
+https://github.com/umijs/qiankun/blob/master/src/sandbox/patchers/dynamicAppend/common.ts#L396
 
 ### CSS隔离
 
@@ -310,8 +313,10 @@ Shadow DOM | 用Shadow DOM包裹 | 能做到主子、并发子的隔离 | 浏览
 子应用之间切换时，是会自动做子应用CSS的加载和卸载的，防止子应用A的CSS代入到子应用B中。
 
 #### 2. Scopted Style
+<img width="942" alt="image" src="https://user-images.githubusercontent.com/5773264/216528122-5b00d617-3847-4b72-89fd-2c832e9b1116.png">
+
 
 #### 3. Shadow DOM
 
-
+用https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM 包裹子应用DOM区域，防止子应用DOM里面的CSS作用范围跑到子应用之外。
 

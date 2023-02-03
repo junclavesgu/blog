@@ -339,7 +339,8 @@
 <li>将当前微应用 window 的 key-value = microWindowKV 和 mainWindowKV 进行 Diff，Diff 出来的结果就是 modifyPropsMap</li>
 <li>将上次快照 mainWindowKV 拷贝到主应用的 window 上，以此恢复环境</li>
 </ol>
-<h4 id="JS沙箱逃逸"><a href="#JS沙箱逃逸" class="headerlink" title="JS沙箱逃逸"></a>JS沙箱逃逸</h4><p>你的JS里有诸如 <code>document.body.appendChild(scriptElement)</code> 这样的代码，会动态往DOM里面插入JS，如果不处理这些JS会在主应用的 window 上执行可能污染真正的window。<br>为此，沙箱还会拦截appendChild方法，凡是子应用中appendChild进去的JS都会被fetch下来去沙箱里面执行。</p>
+<h4 id="JS沙箱逃逸"><a href="#JS沙箱逃逸" class="headerlink" title="JS沙箱逃逸"></a>JS沙箱逃逸</h4><p>你的JS里有诸如 <code>document.body.appendChild(scriptElement)</code> 这样的代码，会动态往DOM里面插入JS，如果不处理这些JS会在主应用的 window 上执行可能污染真正的window。<br>为此，沙箱还会拦截appendChild方法，凡是子应用中appendChild进去的JS都会被fetch下来去沙箱里面执行。<br><img src="https://user-images.githubusercontent.com/5773264/216525816-8847cee2-a7fc-434d-a8d8-53b27e6ec83b.png" alt="image"></p>
+<p><a href="https://github.com/umijs/qiankun/blob/master/src/sandbox/patchers/dynamicAppend/common.ts#L396" target="_blank" rel="noopener">https://github.com/umijs/qiankun/blob/master/src/sandbox/patchers/dynamicAppend/common.ts#L396</a></p>
 <h3 id="CSS隔离"><a href="#CSS隔离" class="headerlink" title="CSS隔离"></a>CSS隔离</h3><p>qiankun提供以下三种隔离样式的方式</p>
 <table>
 <thead>
@@ -374,7 +375,11 @@
 </tr>
 </tbody></table>
 <h4 id="1-CSS生命周期管理"><a href="#1-CSS生命周期管理" class="headerlink" title="1. CSS生命周期管理"></a>1. CSS生命周期管理</h4><p>子应用之间切换时，是会自动做子应用CSS的加载和卸载的，防止子应用A的CSS代入到子应用B中。</p>
-<h4 id="2-Scopted-Style"><a href="#2-Scopted-Style" class="headerlink" title="2. Scopted Style"></a>2. Scopted Style</h4><h4 id="3-Shadow-DOM"><a href="#3-Shadow-DOM" class="headerlink" title="3. Shadow DOM"></a>3. Shadow DOM</h4>
+<h4 id="2-Scopted-Style"><a href="#2-Scopted-Style" class="headerlink" title="2. Scopted Style"></a>2. Scopted Style</h4><img width="942" alt="image" src="https://user-images.githubusercontent.com/5773264/216528122-5b00d617-3847-4b72-89fd-2c832e9b1116.png">
+
+
+<h4 id="3-Shadow-DOM"><a href="#3-Shadow-DOM" class="headerlink" title="3. Shadow DOM"></a>3. Shadow DOM</h4><p>用<a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM" target="_blank" rel="noopener">https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_shadow_DOM</a> 包裹子应用DOM区域，防止子应用DOM里面的CSS作用范围跑到子应用之外。</p>
+
 
                 <hr>
 
