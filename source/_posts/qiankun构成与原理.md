@@ -260,7 +260,7 @@ JS隔离是qiankun最核心最复杂的部分。JS隔离需要实现的目标是
 - 一个map去存储子应用对window的修改记录，对window的写都会记录在内
 - get时优先去map中读，找不到就去外层真实的window上读
 
-<img width="731" alt="image" src="https://user-images.githubusercontent.com/5773264/216524395-a9fa7309-1fd9-4ae4-acc6-3710b6c2d921.png">
+<img width="741" alt="image" src="https://user-images.githubusercontent.com/5773264/216528857-99ebbef7-5fce-4528-8d85-c4e82ee0c922.png">
 
 ##### 如何拦截对window的读写
 

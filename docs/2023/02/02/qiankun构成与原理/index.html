@@ -324,7 +324,7 @@
 <li>一个map去存储子应用对window的修改记录，对window的写都会记录在内</li>
 <li>get时优先去map中读，找不到就去外层真实的window上读</li>
 </ul>
-<img width="731" alt="image" src="https://user-images.githubusercontent.com/5773264/216524395-a9fa7309-1fd9-4ae4-acc6-3710b6c2d921.png">
+<img width="741" alt="image" src="https://user-images.githubusercontent.com/5773264/216528857-99ebbef7-5fce-4528-8d85-c4e82ee0c922.png">
 
 <h5 id="如何拦截对window的读写"><a href="#如何拦截对window的读写" class="headerlink" title="如何拦截对window的读写"></a>如何拦截对window的读写</h5><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> fakewindow = <span class="keyword">new</span> ProxySandbox(); <span class="comment">// 给子应用分配的代理window变量</span></span><br><span class="line"></span><br><span class="line">(<span class="function">(<span class="params"><span class="built_in">window</span></span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">with</span>(<span class="built_in">window</span>)&#123;</span><br><span class="line">      子应用代码</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)(fakewindow);</span><br></pre></td></tr></table></figure>
 
