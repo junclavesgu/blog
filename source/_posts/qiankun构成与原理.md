@@ -225,3 +225,93 @@ export function evalCode(scriptSrc, code) {
 
 - 用eval去执行以字符串形式保存的子应用JS
 - 借助window.__TEMP_EVAL_FUNC__记下子应用JS的执行结果，并缓存到evalCache中避免下次重复eval
+
+## Sanbox
+
+### JS隔离
+
+JS隔离是qiankun最核心最复杂的部分。JS隔离需要实现的目标是：
+- 隔离是指对window修改进行隔离，封装污染window
+- 避免子应用A污染主应用的window
+- 避免子应用A污染子应用B的window
+
+`
+问：沙箱会做避免主应用对子应用A的window污染么？
+答：不会，启动一个子应用时，子应用的window继承自主应用
+`
+
+#### 三种JS沙箱实现： SnapshotSandbox、LegacySandbox 、ProxySandbox
+
+
+不同的JS沙箱实现 | 原理简介 | 优点 | 缺点 | 开启方法
+-- | -- | -- | -- | --
+[ProxySandbox](https://github.com/umijs/qiankun/blob/master/src/sandbox/proxySandbox.ts) | 基于Proxy API实现 | 隔离性和性能较好 | 浏览器兼容性问题，依赖无法polyfill的Proxy API | sanbox = true
+[SnapshotSandbox](https://github.com/umijs/qiankun/blob/master/src/sandbox/snapshotSandbox.ts) | 基于diff算法实现 | 性能低，只支持单例子应用隔离作用有限 | 浏览器兼容性好，支持IE11 | 用于不支持 Proxy 的低版本浏览器降级使用
+[LegacySandbox](https://github.com/umijs/qiankun/blob/master/src/sandbox/legacy/sandbox.ts) | 基于Proxy API实现，现已废弃不推荐使用 | 中间产物 | 中间产物 | singular = true
+
+- qiankun会优先使用ProxySandbox，对于不兼容Proxy的浏览器会降级到SnapshotSandbox
+- ProxySandbox支持同时有多个子应用沙箱运行，SnapshotSandbox无法保证同时有多个子应用时的隔离
+- LegacySandbox时历史中间产物，现在已经没有存在的价值，所以废弃不推荐使用
+
+#### ProxySandbox核心思想
+
+拦截对`window`上字段的读&写，每个子应用一个沙箱(一个fakewindow)，子应用对window读&写实际是对fakewindow的读写。
+
+- 一个map去存储子应用对window的修改记录，对window的写都会记录在内
+- get时优先去map中读，找不到就去外层真实的window上读
+
+<img width="731" alt="image" src="https://user-images.githubusercontent.com/5773264/216524395-a9fa7309-1fd9-4ae4-acc6-3710b6c2d921.png">
+
+##### 如何拦截对window的读写
+
+```js
+const fakewindow = new ProxySandbox(); // 给子应用分配的代理window变量
+
+((window) => {
+    with(window){
+      子应用代码
+    }
+})(fakewindow);
+```
+
+子应用代码中对window的读写，实际上变成了对subAppProxy的读写。
+
+#### SnapshotSandbox核心思想
+
+把主应用的 window 对象做浅拷贝，将 window 的键值对存成一个 Hash Map。之后无论微应用对 window 做任何改动，当要在恢复环境时，把这个 Hash Map 又应用到 window 上就可以了。
+微应用 mount 时：
+
+1. 先把上一次记录的变更 modifyPropsMap 应用到微应用的全局 window，没有则跳过
+2. 浅复制主应用的 window key-value 快照 = mainWindowKV，用于下次恢复全局环境
+
+微应用 unmount 时
+
+1. 将当前微应用 window 的 key-value = microWindowKV 和 mainWindowKV 进行 Diff，Diff 出来的结果就是 modifyPropsMap
+2. 将上次快照 mainWindowKV 拷贝到主应用的 window 上，以此恢复环境
+
+
+#### JS沙箱逃逸
+
+你的JS里有诸如 `document.body.appendChild(scriptElement)` 这样的代码，会动态往DOM里面插入JS，如果不处理这些JS会在主应用的 window 上执行可能污染真正的window。
+为此，沙箱还会拦截appendChild方法，凡是子应用中appendChild进去的JS都会被fetch下来去沙箱里面执行。
+
+### CSS隔离
+
+qiankun提供以下三种隔离样式的方式
+
+
+CSS隔离实现方式 | 原理简介 | 优点 | 缺点 | 开启方法
+-- | -- | -- | -- | --
+CSS生命周期管理 | 子应用之间切换时，是会自动做子应用CSS的加载和卸载的，防止子应用A的CSS代入到子应用B中 | 无额外性能开销兼容性好 | 只能做子应用之间切换时的隔离，无法做主子、并发子的隔离 | 内置逻辑全程开启无法关闭
+Scopted Style | 给子应用套一层特殊选择器的div修改子应用CSS选择器前缀 | 能做到主子、并发子的隔离 | 提升CSS选择器复杂性，降低页面性能 | experimentalStyleIsolation
+Shadow DOM | 用Shadow DOM包裹 | 能做到主子、并发子的隔离 | 浏览器兼容性问题，依赖无法polyfill的Shadow DOM API子应用需要做一些适配 | strictStyleIsolation
+
+#### 1. CSS生命周期管理
+子应用之间切换时，是会自动做子应用CSS的加载和卸载的，防止子应用A的CSS代入到子应用B中。
+
+#### 2. Scopted Style
+
+#### 3. Shadow DOM
+
+
+
